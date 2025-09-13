@@ -1,0 +1,13 @@
+:root {
+  --blue: #0078d7;
+  --lightblue: rgb(216, 237, 255);
+}
+
+*{
+  margin: 0;
+  padding: 0;
+}
+
+body{
+  padding: 0 1rem;
+}

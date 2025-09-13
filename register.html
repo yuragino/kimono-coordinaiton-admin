@@ -15,6 +15,9 @@
 </head>
 
 <body x-data="app" x-init="init" @keydown.enter.prevent="submitForm">
+  <div class="top-link">
+    <a href="./index.html"><i class="fa-solid fa-house"></i> トップページに戻る</a>
+  </div>
   <div class="container">
     <h1>着物画像登録</h1>
 
@@ -26,7 +29,7 @@
     </div>
 
     <!-- カテゴリ選択 -->
-    <div class="form-group">
+    <div class="form-group radio-group">
       <h3 class="section-title">カテゴリ</h3>
       <div>
         <label><input type="radio" value="小紋" x-model="category"> 小紋</label>
@@ -36,12 +39,12 @@
     </div>
 
     <!-- サブカテゴリ選択 -->
-    <div class="form-group" x-show="category !== '浴衣'">
-      <h4 class="section-title">サブカテゴリ</h4>
+    <div class="form-group radio-group" x-show="category !== '浴衣'">
+      <h3 class="section-title">サブカテゴリ</h3>
       <div>
-        <label><input type="radio" value="袷" x-model="subCategory"> 袷(10月〜5月頃)</label>
-        <label><input type="radio" value="単衣" x-model="subCategory"> 単衣(5,6,9,10月頃)</label>
-        <label><input type="radio" value="透単衣" x-model="subCategory"> 透単衣(7,8月頃)</label>
+        <label><input type="radio" value="袷" x-model="subCategory"> 袷</label>
+        <label><input type="radio" value="単衣" x-model="subCategory"> 単衣</label>
+        <label><input type="radio" value="透単衣" x-model="subCategory"> 透単衣</label>
       </div>
     </div>
 

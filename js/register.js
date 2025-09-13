@@ -82,11 +82,15 @@ document.addEventListener('alpine:init', () => {
       this.isSubmitting = true;
       try {
         const uploadedUrls = [];
+
+        // 新規追加分は Cloudinary にアップロード
         for (let file of this.files) {
-          // ✅ 上で定義した関数がここで呼べる
           const url = await this.uploadImageToCloudinary(file, this.category);
           uploadedUrls.push(url);
         }
+
+        // 既存プレビュー（＝既存の imageUrls）も残してマージ
+        const finalUrls = [...this.previews.filter(p => !p.startsWith("blob:")), ...uploadedUrls];
 
         const dataToSave = {
           category: this.category,
@@ -97,7 +101,7 @@ document.addEventListener('alpine:init', () => {
             backWidth: this.backWidth,
             yuki: this.yuki
           },
-          imageUrls: uploadedUrls,
+          imageUrls: finalUrls,
           updatedAt: serverTimestamp(),
         };
 

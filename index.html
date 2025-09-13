@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja" x-data="app" x-init="init">
+
+<head>
+  <meta charset="UTF-8">
+  <title>着物画像一覧</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://www.gstatic.com/firebasejs/12.2.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore-compat.js"></script>
+  <script type="module" src="./js/list.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/sanitize.css">
+  <link rel="stylesheet" href="./css/layout.css">
+  <link rel="stylesheet" href="./css/list.css">
+</head>
+
+<body>
+  <header class="header">
+    <h1 x-text="category"></h1>
+    <div class="header-row">
+      <!-- カテゴリ -->
+      <nav class="categories">
+        <a href="#" @click.prevent="changeCategory('小紋')" :class="{active: category==='小紋'}">小紋</a>
+        <a href="#" @click.prevent="changeCategory('アンティーク')" :class="{active: category==='アンティーク'}">アンティーク</a>
+        <a href="#" @click.prevent="changeCategory('浴衣')" :class="{active: category==='浴衣'}">浴衣</a>
+      </nav>
+      <!-- 並べ替え -->
+      <div class="sort-select">
+        <select x-model="sort">
+          <option value="heightAsc">身丈が小さい順</option>
+          <option value="heightDesc">身丈が大きい順</option>
+          <option value="dateDesc">日付が新しい順</option>
+        </select>
+      </div>
+    </div>
+    <a href="register.html" class="btn-register">
+      <i class="fa-solid fa-circle-plus"></i> 新規登録
+    </a>
+  </header>
+
+  <main>
+    <!-- サブカテゴリ（浴衣以外のとき表示） -->
+    <div class="sub-filters" x-show="category !== '浴衣'">
+      <label><input type="checkbox" value="袷" x-model="subFilter"> 袷</label>
+      <label><input type="checkbox" value="単衣" x-model="subFilter"> 単衣</label>
+      <label><input type="checkbox" value="透単衣" x-model="subFilter"> 透単衣</label>
+    </div>
+
+    <!-- 一覧 -->
+    <div class="cards">
+      <template x-for="item in filteredAndSorted" :key="item.id">
+        <div class="card">
+          <div class="image-wrapper">
+            <template x-for="(url, idx) in item.imageUrls" :key="idx">
+              <img :src="url" x-show="currentImage[item.id] === idx">
+            </template>
+            <!-- 前後切り替え -->
+            <button class="nav-btn left" @click="prevImage(item.id, item.imageUrls.length)" x-show="item.imageUrls.length > 1">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="nav-btn right" @click="nextImage(item.id, item.imageUrls.length)" x-show="item.imageUrls.length > 1">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+            <!-- 編集ボタン -->
+            <button class="circle-badge edit-btn" @click="editItem(item)">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <!-- 美ゆきマーク -->
+            <div class="circle-badge miyuki-mark" x-show="item.isMiyuki">美</div>
+          </div>
+          <details>
+            <summary>サイズ詳細</summary>
+            <table class="size-table">
+              <tr>
+                <th>身丈</th>
+                <td x-text="item.size.height + ' cm'"></td>
+              </tr>
+              <tr>
+                <th>後幅</th>
+                <td x-text="item.size.backWidth + ' cm'"></td>
+              </tr>
+              <tr>
+                <th>裄</th>
+                <td x-text="item.size.yuki + ' cm'"></td>
+              </tr>
+            </table>
+          </details>
+        </div>
+      </template>
+    </div>
+  </main>
+</body>
+
+</html>

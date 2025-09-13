@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>着物画像登録</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
+  <script type="module" src="./js/register.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="./css/layout.css">
+  <link rel="stylesheet" href="./css/register.css">
+</head>
+
+<body x-data="app" x-init="init" @keydown.enter.prevent="submitForm">
+  <div class="container">
+    <h1>着物画像登録</h1>
+
+    <!-- 美ゆきチェック -->
+    <div class="form-group checkbox">
+      <label>
+        <input type="checkbox" x-model="isMiyuki"> 美ゆき
+      </label>
+    </div>
+
+    <!-- カテゴリ選択 -->
+    <div class="form-group">
+      <h3 class="section-title">カテゴリ</h3>
+      <div>
+        <label><input type="radio" value="小紋" x-model="category"> 小紋</label>
+        <label><input type="radio" value="アンティーク" x-model="category"> アンティーク</label>
+        <label><input type="radio" value="浴衣" x-model="category"> 浴衣</label>
+      </div>
+    </div>
+
+    <!-- サブカテゴリ選択 -->
+    <div class="form-group" x-show="category !== '浴衣'">
+      <h4 class="section-title">サブカテゴリ</h4>
+      <div>
+        <label><input type="radio" value="袷" x-model="subCategory"> 袷(10月〜5月頃)</label>
+        <label><input type="radio" value="単衣" x-model="subCategory"> 単衣(5,6,9,10月頃)</label>
+        <label><input type="radio" value="透単衣" x-model="subCategory"> 透単衣(7,8月頃)</label>
+      </div>
+    </div>
+
+    <!-- 寸法入力 -->
+    <div class="form-group dims">
+      <h3 class="section-title">寸法</h3>
+      <div class="input-group">
+        <div class="input-row">
+          <label for="height">身丈：</label>
+          <input id="height" type="number" step="0.5" min="0" x-model="height"> cm
+        </div>
+        <div class="input-row">
+          <label for="backWidth">後幅：</label>
+          <input id="backWidth" type="number" step="0.5" min="0" x-model="backWidth"> cm
+        </div>
+        <div class="input-row">
+          <label for="yuki">裄：</label>
+          <input id="yuki" type="number" step="0.5" min="0" x-model="yuki"> cm
+        </div>
+      </div>
+    </div>
+
+    <!-- 写真アップロード -->
+    <div class="form-group">
+      <h3 class="section-title">写真</h3>
+      <input type="file" multiple accept="image/*" @change="handleImageUpload">
+
+      <div class="preview-container" x-show="previews.length > 0">
+        <template x-for="(url, index) in previews" :key="index">
+          <div class="preview-item">
+            <img :src="url">
+            <button class="delete-btn" @click="confirmRemoveImage(index)">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- 登録 / 更新 ボタン -->
+    <div class="submit-wrapper">
+      <button @click="submitForm" :disabled="isSubmitting" class="submit-btn">
+        <i class="fa-solid fa-circle-check"></i>
+        <span x-show="!isSubmitting" x-text="isEditMode ? '更新' : '登録'"></span>
+        <span x-show="isSubmitting">処理中...</span>
+      </button>
+    </div>
+  </div>
+</body>
+
+</html>

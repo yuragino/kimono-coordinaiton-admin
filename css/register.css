@@ -45,6 +45,11 @@ h2 {
   padding-left: .5rem;
 }
 
+.title-guide{
+  display: flex;
+  justify-content: space-between;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;

@@ -21,6 +21,7 @@ document.addEventListener("alpine:init", () => {
     sort: new URLSearchParams(location.search).get("sort") || "heightAsc",
     items: [],
     currentImage: {},
+    allDetailsOpen: false, // ← 全カード共通の開閉状態をここで持たせる
 
     async init() {
       await this.fetchItems();

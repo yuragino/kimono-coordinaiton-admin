@@ -56,10 +56,12 @@
               <img :src="url" x-show="currentImage[item.id] === idx">
             </template>
             <!-- 前後切り替え -->
-            <button class="nav-btn left" @click="prevImage(item.id, item.imageUrls.length)" x-show="item.imageUrls.length > 1">
+            <button class="nav-btn left" @click="prevImage(item.id, item.imageUrls.length)"
+              x-show="item.imageUrls.length > 1">
               <i class="fas fa-chevron-left"></i>
             </button>
-            <button class="nav-btn right" @click="nextImage(item.id, item.imageUrls.length)" x-show="item.imageUrls.length > 1">
+            <button class="nav-btn right" @click="nextImage(item.id, item.imageUrls.length)"
+              x-show="item.imageUrls.length > 1">
               <i class="fas fa-chevron-right"></i>
             </button>
             <!-- 編集ボタン -->
@@ -69,7 +71,7 @@
             <!-- 美ゆきマーク -->
             <div class="circle-badge miyuki-mark" x-show="item.isMiyuki">美</div>
           </div>
-          <details>
+          <details :open="allDetailsOpen" @toggle="allDetailsOpen = $event.target.open">
             <summary>サイズ詳細</summary>
             <table class="size-table">
               <tr>
@@ -83,6 +85,11 @@
               <tr>
                 <th>裄</th>
                 <td x-text="item.size.yuki + ' cm'"></td>
+              </tr>
+              <tr>
+                <th>登録日</th>
+                <td x-text="item.createdAt ? new Date(item.createdAt.seconds * 1000).toLocaleDateString('ja-JP') : '-'">
+                </td>
               </tr>
             </table>
           </details>

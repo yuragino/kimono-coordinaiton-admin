@@ -34,6 +34,10 @@
           <option value="dateDesc">日付が新しい順</option>
         </select>
       </div>
+      <nav class="rental-filter">
+        <a href="#" :class="{active: !showOnlyRented}" @click.prevent="showOnlyRented=false">全件</a>
+        <a href="#" :class="{active: showOnlyRented}" @click.prevent="showOnlyRented=true">貸出中のみ</a>
+      </nav>
     </div>
     <a href="register.html" class="btn-register">
       <i class="fa-solid fa-circle-plus"></i> 新規登録
@@ -47,11 +51,6 @@
       <label><input type="checkbox" value="単衣" x-model="subFilter"> 単衣</label>
       <label><input type="checkbox" value="透単衣" x-model="subFilter"> 透単衣</label>
     </div>
-
-    <label>
-      <input type="checkbox" x-model="showOnlyRented">
-      <span>貸出予約中のみ表示</span>
-    </label>
 
     <!-- 一覧 -->
     <div class="cards">

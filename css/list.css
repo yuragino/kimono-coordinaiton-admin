@@ -264,3 +264,19 @@ details summary {
 .size-table td {
   text-align: left;
 }
+
+.rental-filter {
+  display: inline-flex;
+  gap: 6px;
+}
+.rental-filter a {
+  padding: 4px 12px;
+  border-radius: 4px;
+  border: 1px solid #2c8be6;
+  text-decoration: none;
+  color: #2c8be6;
+}
+.rental-filter a.active {
+  background: #2c8be6;
+  color: #fff;
+}

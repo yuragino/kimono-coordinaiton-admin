@@ -35,6 +35,8 @@ document.addEventListener('alpine:init', () => {
     async init() {
       if (this.docId) {
         this.isEditMode = true;
+        const urlCat = new URLSearchParams(location.search).get("category");
+        if (urlCat) this.category = urlCat;
         await this.loadData(this.docId);
       }
     },
@@ -140,17 +142,19 @@ document.addEventListener('alpine:init', () => {
 
     async loadData(id) {
       try {
-        const docRef = doc(db, this.category || "浴衣", id);
+        const docRef = doc(db, this.category, id); // ← categoryを正しく参照
         const snap = await getDoc(docRef);
         if (snap.exists()) {
           const data = snap.data();
-          this.category = data.category;
+          this.category = data.category; // DB側の値で上書きしてもOK
           this.subCategory = data.subCategory || "袷";
           this.isMiyuki = !!data.isMiyuki;
-          this.height = data.size?.height;
-          this.backWidth = data.size?.backWidth;
-          this.yuki = data.size?.yuki;
+          this.height = data.size?.height || "";
+          this.backWidth = data.size?.backWidth || "";
+          this.yuki = data.size?.yuki || "";
           this.previews = data.imageUrls || [];
+        } else {
+          console.warn("該当ドキュメントなし");
         }
       } catch (e) {
         console.error("ロード失敗", e);

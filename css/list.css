@@ -3,6 +3,10 @@
   --lightblue: rgb(216, 237, 255);
 }
 
+body{
+  background-color: #f9f9f9;
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -71,6 +75,7 @@
   display: flex;
   gap: 10px;
   padding: 0.4rem;
+  background-color: white;
   border: 1px solid var(--blue);
   color: var(--blue);
   border-radius: 6px;

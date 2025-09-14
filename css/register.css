@@ -4,8 +4,6 @@ body {
 }
 
 .top-link {
-  width: 459px;
-  margin: 0 auto;
   padding: 0.5rem 0;
 }
 
@@ -30,6 +28,11 @@ kbd {
 }
 
 .container {
+  width: max-content;
+  margin: 0 auto;
+}
+
+.form-wrapper {
   width: max-content;
   background: #f9f9f9;
   padding: 2rem;

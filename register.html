@@ -103,6 +103,9 @@
           <span x-show="!isSubmitting" x-text="isEditMode ? '更新' : '登録'"></span>
           <span x-show="isSubmitting">送信中...</span>
         </button>
+        <button @click="deleteItem" x-show="isEditMode" class="delete-btn-main">
+          <i class="fa-solid fa-trash"></i> 削除
+        </button>
       </div>
 
       <!-- ✅ モーダルオーバーレイ -->

@@ -200,3 +200,19 @@ input[type="radio"] {
   color: var(--blue);
   font-weight: bold;
 }
+
+.delete-btn-main {
+  font-size: 1rem;
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  margin-left: 1rem;
+  transition: background 0.2s;
+}
+
+.delete-btn-main:hover {
+  background-color: #b52b27;
+}

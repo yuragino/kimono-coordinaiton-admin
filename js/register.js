@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getFirestore, collection, addDoc, updateDoc, doc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, updateDoc, doc, getDoc, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBOMtAoCObyoalTk6_nVpGlsnLcGSw4Jzc",
@@ -81,14 +81,13 @@ document.addEventListener('alpine:init', () => {
         return;
       }
 
-      // ✅ 寸法バリデーション
+      // 寸法バリデーション
       if (!this.height || !this.backWidth || !this.yuki) {
         alert("寸法（身丈・後幅・裄）をすべて入力してください");
         return;
       }
 
-      // ✅ 写真バリデーション
-      // previews に既存画像 + 新規 blob が入るので、length=0なら写真なし
+      // 写真バリデーション
       if (this.previews.length === 0) {
         alert("写真を1枚以上選択してください");
         return;
@@ -97,17 +96,14 @@ document.addEventListener('alpine:init', () => {
       this.isSubmitting = true;
       try {
         const uploadedUrls = [];
-
-        // 新規追加分を Cloudinary にアップロード
         for (let file of this.files) {
           const url = await this.uploadImageToCloudinary(file, this.category);
           uploadedUrls.push(url);
         }
 
-        // ✅ 既存 + 新規 のマージ
         const finalUrls = [
-          ...this.previews.filter(p => !p.startsWith("blob:")), // 既存分
-          ...uploadedUrls // 新規分
+          ...this.previews.filter(p => !p.startsWith("blob:")),
+          ...uploadedUrls
         ];
 
         const dataToSave = {
@@ -124,9 +120,22 @@ document.addEventListener('alpine:init', () => {
         };
 
         if (this.isEditMode) {
-          await updateDoc(doc(db, this.category, this.docId), dataToSave);
+          // 元のカテゴリをURLから取得
+          const originalCategory = new URLSearchParams(location.search).get("category");
+
+          if (originalCategory === this.category) {
+            // ✅ カテゴリが変わってない → update
+            await updateDoc(doc(db, this.category, this.docId), dataToSave);
+          } else {
+            // ✅ カテゴリが変わった → 元をdelete、新カテゴリにadd
+            await deleteDoc(doc(db, originalCategory, this.docId));
+            dataToSave.createdAt = serverTimestamp();
+            await addDoc(collection(db, this.category), dataToSave);
+          }
           alert("更新しました");
+          location.href = `index.html?category=${this.category}`;
         } else {
+          // 新規登録
           dataToSave.createdAt = serverTimestamp();
           await addDoc(collection(db, this.category), dataToSave);
           alert("登録しました");
@@ -178,6 +187,20 @@ document.addEventListener('alpine:init', () => {
         e.preventDefault();
         if (!this.isSubmitting) {
           this.submitForm();
+        }
+      }
+    },
+    async deleteItem() {
+      if (!this.isEditMode || !this.docId) return;
+
+      if (confirm("本当に削除しますか？")) {
+        try {
+          await deleteDoc(doc(db, this.category, this.docId));
+          alert("削除しました");
+          location.href = `index.html?category=${this.category}`; // ✅ 一覧へ戻す
+        } catch (e) {
+          console.error("削除失敗", e);
+          alert("削除に失敗しました: " + e.message);
         }
       }
     }

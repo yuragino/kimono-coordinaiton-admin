@@ -3,7 +3,7 @@
   --lightblue: rgb(216, 237, 255);
 }
 
-body{
+body {
   background-color: #f9f9f9;
 }
 
@@ -32,7 +32,8 @@ body{
   align-items: center;
   gap: 0.4em;
   padding: 6px 12px;
-  background-color: #c24c62; /* 梅色系 */
+  background-color: #c24c62;
+  /* 梅色系 */
   color: #fff;
   border-radius: 6px;
   text-decoration: none;
@@ -178,6 +179,54 @@ body{
 .miyuki-mark {
   left: 4px;
   background: rgba(255, 77, 77, 0.8);
+}
+
+.status-overlay {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  z-index: 10;
+}
+
+/* レンタル１行分のレイアウト */
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 貸出予約の文字 */
+.status-label {
+  background-color: rgba(231, 76, 60, 0.9);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* 貸出登録ボタン */
+.rental-btn {
+  background-color: rgba(46, 204, 113, 0.9);
+  color: white;
+  border: none;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.rental-btn:hover {
+  background-color: rgba(39, 174, 96, 1);
+}
+
+.rental-add {
+  display: flex;
+  justify-content: flex-end;
 }
 
 details {

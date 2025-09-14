@@ -1,5 +1,10 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
+import {
+  getFirestore, collection, getDocs, updateDoc, doc, Timestamp
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBOMtAoCObyoalTk6_nVpGlsnLcGSw4Jzc",
@@ -21,7 +26,11 @@ document.addEventListener("alpine:init", () => {
     sort: new URLSearchParams(location.search).get("sort") || "heightAsc",
     items: [],
     currentImage: {},
-    allDetailsOpen: false, // ← 全カード共通の開閉状態をここで持たせる
+    allDetailsOpen: false,
+    isRentalModalOpen: false,
+    rentalDate: "",
+    rentalTargetItem: null,
+    showOnlyRented: false,
 
     async init() {
       await this.fetchItems();
@@ -31,18 +40,23 @@ document.addEventListener("alpine:init", () => {
 
     async fetchItems() {
       const snap = await getDocs(collection(db, this.category));
-      this.items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      this.items = snap.docs.map(d => {
+        const data = d.data();
+        return {
+          id: d.id,
+          ...data,
+          rentals: data.rentals || []  // 配列がなければ空に
+        };
+      });
       this.items.forEach(i => this.currentImage[i.id] = 0);
     },
 
-    // ★ カテゴリ切り替え
     changeCategory(cat) {
       this.category = cat;
       this.updateUrl();
       this.fetchItems();
     },
 
-    // ★ ソートやチェックが変わった時URLに反映
     updateUrl() {
       const params = new URLSearchParams();
       params.set("category", this.category);
@@ -51,27 +65,14 @@ document.addEventListener("alpine:init", () => {
       history.replaceState(null, "", "?" + params.toString());
     },
 
-    // ---- watcher代わりにAlpineの仕組みを使う ----
-    // （sortやsubFilterが変わるたびに updateUrl 呼び出し）
-    get watchSort() {
-      this.updateUrl();
-      return this.sort;
-    },
-    get watchSubFilter() {
-      this.updateUrl();
-      return this.subFilter;
-    },
-
-    // ---- 並べ替え/フィルタ済みデータ ----
     get filteredAndSorted() {
       let arr = [...this.items];
-
-      // フィルタ
       if (this.category !== "浴衣" && this.subFilter.length > 0) {
         arr = arr.filter(i => this.subFilter.includes(i.subCategory));
       }
-
-      // ソート
+      if (this.showOnlyRented) {
+        arr = arr.filter(i => i.rentals && i.rentals.length > 0);
+      }
       if (this.sort === "heightAsc") {
         arr.sort((a, b) => (a.size?.height || 0) - (b.size?.height || 0));
       } else if (this.sort === "heightDesc") {
@@ -91,6 +92,70 @@ document.addEventListener("alpine:init", () => {
 
     editItem(item) {
       location.href = `register.html?id=${item.id}&category=${this.category}`;
+    },
+
+    // --- モーダル ---
+    openRentalModal(item) {
+      this.rentalTargetItem = item;
+      this.rentalDate = new Date().toISOString().slice(0, 10);
+      this.isRentalModalOpen = true;
+    },
+    closeRentalModal() {
+      this.isRentalModalOpen = false;
+      this.rentalDate = "";
+      this.rentalTargetItem = null;
+    },
+
+    // --- 貸出登録（新しい record を rentals 配列に追加して保存） ---
+    async submitRental() {
+      if (!this.rentalDate) {
+        alert("貸出日を入力してください。");
+        return;
+      }
+      const rentalDateObj = new Date(this.rentalDate);
+      const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+      const record = {
+        rentalDate: Timestamp.fromDate(rentalDateObj),
+        rentalStartDate: Timestamp.fromDate(new Date(rentalDateObj.getTime() - ONE_WEEK_MS)),
+        rentalEndDate: Timestamp.fromDate(new Date(rentalDateObj.getTime() + ONE_WEEK_MS)),
+      };
+
+      const itemRef = doc(db, this.category, this.rentalTargetItem.id);
+      const current = this.rentalTargetItem.rentals || [];
+      const updated = [...current, record]; // 既存に追加
+
+      await updateDoc(itemRef, { rentals: updated });
+
+      this.closeRentalModal();
+      await this.fetchItems();
+    },
+
+    // --- 貸出解除（rentals配列から対象1件を除外して保存） ---
+    async cancelRental(item, rentalToDelete) {
+      const confirmDelete = confirm("この貸出予約を解除しますか？");
+      if (!confirmDelete) return;  // キャンセルなら処理しない
+
+      const itemRef = doc(db, this.category, item.id);
+      const current = item.rentals || [];
+
+      const updated = current.filter(r =>
+        !(r.rentalDate.seconds === rentalToDelete.rentalDate.seconds &&
+          r.rentalStartDate.seconds === rentalToDelete.rentalStartDate.seconds &&
+          r.rentalEndDate.seconds === rentalToDelete.rentalEndDate.seconds)
+      );
+
+      await updateDoc(itemRef, { rentals: updated });
+      await this.fetchItems();
+    },
+
+    // --- 日付表示 ---
+    formatRentalDateRange(rental) {
+      const toDate = d => d?.toDate ? d.toDate() : new Date(d);
+      const options = { month: "numeric", day: "numeric" };
+      const startStr = toDate(rental.rentalStartDate).toLocaleDateString("ja-JP", options);
+      const endStr = toDate(rental.rentalEndDate).toLocaleDateString("ja-JP", options);
+      return `貸出予約中 ${startStr} 〜 ${endStr}`;
     }
   }));
 });

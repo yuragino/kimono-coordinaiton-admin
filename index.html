@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/sanitize.css">
   <link rel="stylesheet" href="./css/layout.css">
+  <link rel="stylesheet" href="./css/modal.css">
   <link rel="stylesheet" href="./css/list.css">
 </head>
 
@@ -47,6 +48,11 @@
       <label><input type="checkbox" value="透単衣" x-model="subFilter"> 透単衣</label>
     </div>
 
+    <label>
+      <input type="checkbox" x-model="showOnlyRented">
+      <span>貸出予約中のみ表示</span>
+    </label>
+
     <!-- 一覧 -->
     <div class="cards">
       <template x-for="item in filteredAndSorted" :key="item.id">
@@ -70,6 +76,20 @@
             </button>
             <!-- 美ゆきマーク -->
             <div class="circle-badge miyuki-mark" x-show="item.isMiyuki">美</div>
+            <!-- 貸出マーク -->
+            <div class="status-overlay">
+              <template x-for="(rental, idx) in item.rentals" :key="idx">
+                <div class="status-row">
+                  <div class="status-label" x-text="formatRentalDateRange(rental)"></div>
+                  <div>
+                    <button class="rental-btn" @click="cancelRental(item, rental)">貸出解除</button>
+                  </div>
+                </div>
+              </template>
+              <div class="rental-add">
+                <button class="rental-btn" @click="openRentalModal(item)">貸出登録</button>
+              </div>
+            </div>
           </div>
           <details :open="allDetailsOpen" @toggle="allDetailsOpen = $event.target.open">
             <summary>サイズ詳細</summary>
@@ -95,6 +115,17 @@
           </details>
         </div>
       </template>
+    </div>
+    <!-- 貸出登録モーダル -->
+    <div class="modal rental-modal" x-show="isRentalModalOpen" @click.self="closeRentalModal">
+      <div class="modal-content rental-modal-content">
+        <h3>貸出日登録</h3>
+        <input type="date" x-model="rentalDate">
+        <div class="modal-buttons">
+          <button @click="submitRental">登録</button>
+          <button @click="closeRentalModal">キャンセル</button>
+        </div>
+      </div>
     </div>
   </main>
 </body>

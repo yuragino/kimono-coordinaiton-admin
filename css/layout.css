@@ -11,3 +11,7 @@
 body{
   padding: 0 1rem;
 }
+
+[x-cloak] {
+  display: none !important;
+}

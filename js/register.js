@@ -79,18 +79,34 @@ document.addEventListener('alpine:init', () => {
         return;
       }
 
+      // ✅ 寸法バリデーション
+      if (!this.height || !this.backWidth || !this.yuki) {
+        alert("寸法（身丈・後幅・裄）をすべて入力してください");
+        return;
+      }
+
+      // ✅ 写真バリデーション
+      // previews に既存画像 + 新規 blob が入るので、length=0なら写真なし
+      if (this.previews.length === 0) {
+        alert("写真を1枚以上選択してください");
+        return;
+      }
+
       this.isSubmitting = true;
       try {
         const uploadedUrls = [];
 
-        // 新規追加分は Cloudinary にアップロード
+        // 新規追加分を Cloudinary にアップロード
         for (let file of this.files) {
           const url = await this.uploadImageToCloudinary(file, this.category);
           uploadedUrls.push(url);
         }
 
-        // 既存プレビュー（＝既存の imageUrls）も残してマージ
-        const finalUrls = [...this.previews.filter(p => !p.startsWith("blob:")), ...uploadedUrls];
+        // ✅ 既存 + 新規 のマージ
+        const finalUrls = [
+          ...this.previews.filter(p => !p.startsWith("blob:")), // 既存分
+          ...uploadedUrls // 新規分
+        ];
 
         const dataToSave = {
           category: this.category,
@@ -151,6 +167,16 @@ document.addEventListener('alpine:init', () => {
       this.isSubmitting = false;
       const fileInput = document.querySelector('input[type="file"]');
       if (fileInput) fileInput.value = "";
+    },
+
+    handleKeydown(e) {
+      if (e.key === "Enter" && e.metaKey) {
+        e.preventDefault();
+        if (!this.isSubmitting) {
+          this.submitForm();
+        }
+      }
     }
+
   }));
 });

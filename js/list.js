@@ -26,7 +26,6 @@ document.addEventListener("alpine:init", () => {
     sort: new URLSearchParams(location.search).get("sort") || "heightAsc",
     items: [],
     currentImage: {},
-    allDetailsOpen: false,
     isRentalModalOpen: false,
     rentalDate: "",
     rentalTargetItem: null,
@@ -155,7 +154,7 @@ document.addEventListener("alpine:init", () => {
       const options = { month: "numeric", day: "numeric" };
       const startStr = toDate(rental.rentalStartDate).toLocaleDateString("ja-JP", options);
       const endStr = toDate(rental.rentalEndDate).toLocaleDateString("ja-JP", options);
-      return `貸出予約中 ${startStr} 〜 ${endStr}`;
+      return `予約 ${startStr} 〜 ${endStr}`;
     }
   }));
 });

@@ -242,8 +242,6 @@ details summary {
 .size-table {
   width: 100%;
   border-collapse: collapse;
-  /* 枠線の隙間をなくす */
-  margin-top: 0.5rem;
   font-size: 0.95rem;
 }
 
@@ -255,7 +253,6 @@ details summary {
 
 .size-table th {
   width: 40%;
-  /* ラベル側の固定幅 */
   text-align: left;
   background: #f9f9f9;
   font-weight: 600;

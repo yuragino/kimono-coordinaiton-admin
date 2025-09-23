@@ -80,20 +80,25 @@
       </div>
 
       <!-- 写真アップロード -->
-      <div class="form-group">
-        <h3 class="section-title">写真</h3>
-        <input type="file" multiple accept="image/*" @change="handleImageUpload">
-
-        <div class="preview-container" x-show="previews.length > 0">
-          <template x-for="(url, index) in previews" :key="index">
-            <div class="preview-item">
-              <img :src="url">
-              <button class="delete-btn" @click="confirmRemoveImage(index)">
-                <i class="fa-solid fa-trash"></i>
-              </button>
-            </div>
-          </template>
+      <div class="upload-zone" @click="$refs.fileInput.click()" @dragover.prevent="isDragOver = true"
+        @dragleave.prevent="isDragOver = false" @drop.prevent="onDrop($event)" :class="{ 'drag-over': isDragOver }">
+        <input type="file" multiple accept="image/*" x-ref="fileInput" @change="handleImageUpload" hidden>
+        <div class="upload-content">
+          <i class="fa-solid fa-cloud-arrow-up fa-2x"></i>
+          <p>画像選択またはドロップ</p>
         </div>
+      </div>
+
+      <!-- プレビュー -->
+      <div class="preview-container" x-show="previews.length > 0">
+        <template x-for="(url, index) in previews" :key="index">
+          <div class="preview-item">
+            <img :src="url">
+            <button class="delete-btn" @click="confirmRemoveImage(index)">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </template>
       </div>
 
       <!-- 登録 / 更新 ボタン -->

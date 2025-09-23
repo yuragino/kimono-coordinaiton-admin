@@ -28,6 +28,7 @@ document.addEventListener('alpine:init', () => {
     yuki: "",
     previews: [],
     files: [],
+    isDragOver: false,
     isEditMode: false,
     isSubmitting: false,
     docId: new URLSearchParams(location.search).get("id"),
@@ -48,6 +49,15 @@ document.addEventListener('alpine:init', () => {
       }
     },
 
+    onDrop(e) {
+      this.isDragOver = false;
+      for (let file of e.dataTransfer.files) {
+        this.files.push(file);
+        this.previews.push(URL.createObjectURL(file));
+      }
+      e.dataTransfer.clearData();
+    },
+
     confirmRemoveImage(index) {
       if (confirm("この画像を削除しますか？")) {
         this.removeImage(index);
@@ -60,7 +70,6 @@ document.addEventListener('alpine:init', () => {
       this.previews.splice(index, 1);
     },
 
-    // ✅ ここを追加！
     async uploadImageToCloudinary(file, folderName) {
       const formData = new FormData();
       formData.append("file", file);

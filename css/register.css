@@ -216,3 +216,27 @@ input[type="radio"] {
 .delete-btn-main:hover {
   background-color: #b52b27;
 }
+
+.upload-zone {
+  border: 2px dashed #bbb;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.upload-zone:hover {
+  background: #fafafa;
+}
+.upload-zone.drag-over {
+  border-color: #007BFF;
+  background: #E9F5FF;
+}
+.upload-content i {
+  color: #666;
+  margin-bottom: 10px;
+}
+.upload-content p {
+  color: #333;
+  font-size: 12px;
+}

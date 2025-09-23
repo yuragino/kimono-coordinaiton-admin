@@ -76,8 +76,10 @@ document.addEventListener("alpine:init", () => {
         arr.sort((a, b) => (a.size?.height || 0) - (b.size?.height || 0));
       } else if (this.sort === "heightDesc") {
         arr.sort((a, b) => (b.size?.height || 0) - (a.size?.height || 0));
+      } else if (this.sort === "dateAsc") {
+        arr.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
       } else if (this.sort === "dateDesc") {
-        arr.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)).reverse();
+        arr.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
       }
       return arr;
     },

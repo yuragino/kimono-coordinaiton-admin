@@ -147,7 +147,7 @@ document.addEventListener('alpine:init', () => {
           // 新規登録
           dataToSave.createdAt = serverTimestamp();
           await addDoc(collection(db, this.category), dataToSave);
-          alert("登録しました");
+          // alert("登録しました");
           this.resetForm();
         }
       } catch (err) {
@@ -206,7 +206,7 @@ document.addEventListener('alpine:init', () => {
       if (confirm("本当に削除しますか？")) {
         try {
           await deleteDoc(doc(db, this.category, this.docId));
-          alert("削除しました");
+          // alert("削除しました");
           location.href = `index.html?category=${this.category}`; // ✅ 一覧へ戻す
         } catch (e) {
           console.error("削除失敗", e);

@@ -183,13 +183,14 @@ document.addEventListener('alpine:init', () => {
     },
 
     handleKeydown(e) {
-      if (e.key === "Enter" && e.metaKey) {
+      if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         if (!this.isSubmitting) {
           this.submitForm();
         }
       }
     },
+
     async deleteItem() {
       if (!this.isEditMode || !this.docId) return;
 

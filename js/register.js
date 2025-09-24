@@ -189,6 +189,9 @@ document.addEventListener('alpine:init', () => {
       this.isSubmitting = false;
       const fileInput = document.querySelector('input[type="file"]');
       if (fileInput) fileInput.value = "";
+      this.$nextTick(() => {
+        this.$refs.heightInput.focus();
+      });
     },
 
     handleKeydown(e) {

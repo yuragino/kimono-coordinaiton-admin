@@ -80,7 +80,8 @@
             <div class="status-overlay">
               <template x-for="(rental, idx) in item.rentals" :key="idx">
                 <div class="status-row">
-                  <div class="status-label" x-text="formatRentalDateRange(rental)"></div>
+                  <div class="status-label" x-text="formatDateRange(rental.rentalStartDate,rental.rentalEndDate)"></div>
+                  <div class="status-label" x-text="formatDate(rental.rentalDate)"></div>
                   <div>
                     <button class="rental-btn" @click="cancelRental(item, rental)">貸出解除</button>
                   </div>
@@ -91,25 +92,25 @@
               </div>
             </div>
           </div>
-            <table class="size-table">
-              <tr>
-                <th>身丈</th>
-                <td x-text="item.size.height + ' cm'"></td>
-              </tr>
-              <tr>
-                <th>後幅</th>
-                <td x-text="item.size.backWidth + ' cm'"></td>
-              </tr>
-              <tr>
-                <th>裄</th>
-                <td x-text="item.size.yuki + ' cm'"></td>
-              </tr>
-              <tr>
-                <th>登録日</th>
-                <td x-text="item.createdAt ? new Date(item.createdAt.seconds * 1000).toLocaleDateString('ja-JP') : '-'">
-                </td>
-              </tr>
-            </table>
+          <table class="size-table">
+            <tr>
+              <th>身丈</th>
+              <td x-text="item.size.height + ' cm'"></td>
+            </tr>
+            <tr>
+              <th>後幅</th>
+              <td x-text="item.size.backWidth + ' cm'"></td>
+            </tr>
+            <tr>
+              <th>裄</th>
+              <td x-text="item.size.yuki + ' cm'"></td>
+            </tr>
+            <tr>
+              <th>登録日</th>
+              <td x-text="item.createdAt ? new Date(item.createdAt.seconds * 1000).toLocaleDateString('ja-JP') : '-'">
+              </td>
+            </tr>
+          </table>
         </div>
       </template>
     </div>

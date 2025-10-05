@@ -151,12 +151,26 @@ document.addEventListener("alpine:init", () => {
     },
 
     // --- 日付表示 ---
-    formatRentalDateRange(rental) {
+    // formatDateRange(rental) {
+    //   const toDate = d => d?.toDate ? d.toDate() : new Date(d);
+    //   const options = { month: "numeric", day: "numeric" };
+    //   const startStr = toDate(rental.rentalStartDate).toLocaleDateString("ja-JP", options);
+    //   const endStr = toDate(rental.rentalEndDate).toLocaleDateString("ja-JP", options);
+    //   return `${startStr} 〜 ${endStr}`;
+    // },
+    formatDate(date) {
+      const d = date?.toDate ? date.toDate() : new Date(date);
+      const options = { month: "numeric", day: "numeric" };
+      return d.toLocaleDateString("ja-JP", options);
+    },
+
+    formatDateRange(start, end) {
       const toDate = d => d?.toDate ? d.toDate() : new Date(d);
       const options = { month: "numeric", day: "numeric" };
-      const startStr = toDate(rental.rentalStartDate).toLocaleDateString("ja-JP", options);
-      const endStr = toDate(rental.rentalEndDate).toLocaleDateString("ja-JP", options);
-      return `予約 ${startStr} 〜 ${endStr}`;
+      const startStr = toDate(start).toLocaleDateString("ja-JP", options);
+      const endStr = toDate(end).toLocaleDateString("ja-JP", options);
+      return `${startStr} 〜 ${endStr}`;
     }
+
   }));
 });

@@ -15,3 +15,16 @@ body{
 [x-cloak] {
   display: none !important;
 }
+
+.btn-register {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 6px 12px;
+  background-color: #c24c62;
+  /* 梅色系 */
+  color: #fff;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+}

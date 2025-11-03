@@ -5,8 +5,6 @@
   <meta charset="UTF-8">
   <title>着物管理画面</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://www.gstatic.com/firebasejs/12.2.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore-compat.js"></script>
   <script type="module" src="./js/script.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -40,9 +38,11 @@
         <a href="#" :class="{active: showOnlyRented}" @click.prevent="showOnlyRented=true">貸出中のみ</a>
       </nav>
     </div>
-    <a href="register.html" class="btn-register">
+    <a href="register.html" class="btn-register" x-show="user">
       <i class="fa-solid fa-circle-plus"></i> 着物新規登録
     </a>
+    <a href="#" x-show="!user" @click="login" class="btn-register">ログインする</a>
+    <!-- <a href="#" x-show="user" @click="logout">ログアウト</a> -->
   </header>
 
   <main>

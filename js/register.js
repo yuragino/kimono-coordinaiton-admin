@@ -1,19 +1,7 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getFirestore, collection, addDoc, updateDoc, doc, getDoc, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBOMtAoCObyoalTk6_nVpGlsnLcGSw4Jzc",
-  authDomain: "kimono-coordinate.firebaseapp.com",
-  projectId: "kimono-coordinate",
-  storageBucket: "kimono-coordinate.appspot.com",
-  messagingSenderId: "399031825104",
-  appId: "1:399031825104:web:46539ee3ede037c45724d5",
-  measurementId: "G-ETTRN5YVXN"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
+import { doc, getDoc, collection, addDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { db } from "./firebase-config.js";
+import { setupAuth } from "./auth-utils.js";
+import { signInWithGoogle } from "./firebase-auth.js";
 const CLOUDINARY_CONFIG = {
   CLOUD_NAME: 'dxq1xqypx',
   UPLOAD_PRESET: 'unsigned_preset',
@@ -34,12 +22,17 @@ document.addEventListener('alpine:init', () => {
     docId: new URLSearchParams(location.search).get("id"),
 
     async init() {
+      setupAuth(this);
       if (this.docId) {
         this.isEditMode = true;
         const urlCat = new URLSearchParams(location.search).get("category");
         if (urlCat) this.category = urlCat;
         await this.loadData(this.docId);
       }
+    },
+
+    login() {
+      signInWithGoogle();
     },
 
     handleImageUpload(e) {

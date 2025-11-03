@@ -1,23 +1,7 @@
-import {
-  initializeApp
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-
-import {
-  getFirestore, collection, getDocs, updateDoc, doc, Timestamp
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBOMtAoCObyoalTk6_nVpGlsnLcGSw4Jzc",
-  authDomain: "kimono-coordinate.firebaseapp.com",
-  projectId: "kimono-coordinate",
-  storageBucket: "kimono-coordinate.appspot.com",
-  messagingSenderId: "399031825104",
-  appId: "1:399031825104:web:46539ee3ede037c45724d5",
-  measurementId: "G-ETTRN5YVXN"
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
+import { doc, collection, updateDoc, getDocs, Timestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { db } from "./firebase-config.js";
+import { signInWithGoogle, signOutGoogle } from "./firebase-auth.js";
+import { setupAuth } from "./auth-utils.js";
 document.addEventListener("alpine:init", () => {
   Alpine.data("app", () => ({
     category: new URLSearchParams(location.search).get("category") || "小紋",
@@ -32,9 +16,17 @@ document.addEventListener("alpine:init", () => {
     showOnlyRented: false,
 
     async init() {
+      setupAuth(this);
       await this.fetchItems();
       this.$watch("sort", () => this.updateUrl());
       this.$watch("subFilter", () => this.updateUrl());
+    },
+
+    login() {
+      signInWithGoogle();
+    },
+    logout() {
+      signOutGoogle();
     },
 
     async fetchItems() {
@@ -151,13 +143,6 @@ document.addEventListener("alpine:init", () => {
     },
 
     // --- 日付表示 ---
-    // formatDateRange(rental) {
-    //   const toDate = d => d?.toDate ? d.toDate() : new Date(d);
-    //   const options = { month: "numeric", day: "numeric" };
-    //   const startStr = toDate(rental.rentalStartDate).toLocaleDateString("ja-JP", options);
-    //   const endStr = toDate(rental.rentalEndDate).toLocaleDateString("ja-JP", options);
-    //   return `${startStr} 〜 ${endStr}`;
-    // },
     formatDate(date) {
       const d = date?.toDate ? date.toDate() : new Date(date);
       const options = { month: "numeric", day: "numeric" };

@@ -1,6 +1,6 @@
 import { doc, collection, updateDoc, getDocs, Timestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 import { db } from "./firebase-config.js";
-import { signInWithGoogle, signOutGoogle } from "./firebase-auth.js";
+import { signInWithGoogle, signOutGoogle, initAuthState } from "./firebase-auth.js";
 import { setupAuth } from "./auth-utils.js";
 document.addEventListener("alpine:init", () => {
   Alpine.data("app", () => ({
@@ -14,9 +14,15 @@ document.addEventListener("alpine:init", () => {
     rentalDate: "",
     rentalTargetItem: null,
     showOnlyRented: false,
+    isLoading: true,
+    user: null,
 
     async init() {
-      setupAuth(this);
+      // Firebase Auth 状態監視
+      initAuthState((firebaseUser) => {
+        this.user = firebaseUser;
+        this.isLoading = false;
+      });
       await this.fetchItems();
       this.$watch("sort", () => this.updateUrl());
       this.$watch("subFilter", () => this.updateUrl());
@@ -26,6 +32,7 @@ document.addEventListener("alpine:init", () => {
       signInWithGoogle();
     },
     logout() {
+      if (!confirm("ログアウトしますか？")) return;
       signOutGoogle();
     },
 

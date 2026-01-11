@@ -15,12 +15,6 @@
 
 <body x-data="app" x-init="init" @keydown.window="handleKeydown($event)">
   <div class="container text-center">
-    <div>
-      <span x-show="isLoggedIn" x-text="user?.displayName + ' としてログイン中'"></span>
-      <span x-show="!isLoggedIn">未ログインのため登録ができません。</span>
-      <a href="#" x-show="!user" @click="login" class="btn-register">ログインする</a>
-    </div>
-
     <div class="top-link">
       <a :href="`./index.html?category=${category}`">トップページに戻る</a>
       <span class="shortcut-hint">

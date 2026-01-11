@@ -8,7 +8,6 @@ const provider = new GoogleAuthProvider();
 export function signInWithGoogle() {
   return signInWithPopup(auth, provider)
     .then((result) => {
-      console.log("ログイン成功:", result.user);
       return result.user;
     })
     .catch((error) => {
@@ -26,10 +25,6 @@ export function initAuthState(callback) {
 
 export function signOutGoogle() {
   return signOut(auth)
-    .then(() => {
-      console.log("ログアウトしました");
-      alert("ログアウトしました");
-    })
     .catch((error) => {
       console.error("ログアウト失敗:", error);
       alert("ログアウトに失敗しました: " + error.message);

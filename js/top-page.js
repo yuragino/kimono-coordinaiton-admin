@@ -24,6 +24,7 @@ document.addEventListener("alpine:init", () => {
         this.isLoading = false;
       });
       await this.fetchItems();
+      await this.cleanupExpiredRentals();
       this.$watch("sort", () => this.updateUrl());
       this.$watch("subFilter", () => this.updateUrl());
     },
@@ -34,6 +35,23 @@ document.addEventListener("alpine:init", () => {
     logout() {
       if (!confirm("ログアウトしますか？")) return;
       signOutGoogle();
+    },
+
+    async cleanupExpiredRentals() {
+      const now = new Date();
+      for (const item of this.items) {
+        const rentals = item.rentals || [];
+        const updated = rentals.filter(r => {
+          const end = r.rentalEndDate?.toDate ? r.rentalEndDate.toDate() : new Date(r.rentalEndDate);
+          return end >= now;
+        });
+        if (updated.length !== rentals.length) {
+          const ref = doc(db, this.category, item.id);
+          await updateDoc(ref, { rentals: updated });
+          console.log(`期限切れ削除 -> ${item.id}`);
+        }
+      }
+      await this.fetchItems();
     },
 
     async fetchItems() {

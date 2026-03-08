@@ -38,18 +38,21 @@ document.addEventListener("alpine:init", () => {
     },
 
     async cleanupExpiredRentals() {
-      const now = new Date();
+      // JSTの今日0時
+      const today = new Date();
+      const jstToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const toJSTDate = ts => {
+        const d = ts?.toDate ? ts.toDate() : new Date(ts);
+        const jst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
+        return new Date(jst.getFullYear(), jst.getMonth(), jst.getDate());
+      };
+      const isValid = end => toJSTDate(end) >= jstToday;
       for (const item of this.items) {
         const rentals = item.rentals || [];
-        const updated = rentals.filter(r => {
-          const end = r.rentalEndDate?.toDate ? r.rentalEndDate.toDate() : new Date(r.rentalEndDate);
-          return end >= now;
-        });
-        if (updated.length !== rentals.length) {
-          const ref = doc(db, this.category, item.id);
-          await updateDoc(ref, { rentals: updated });
-          console.log(`期限切れ削除 -> ${item.id}`);
-        }
+        const validRentals = rentals.filter(r => isValid(r.rentalEndDate));
+        if (validRentals.length === rentals.length) continue;
+        await updateDoc(doc(db, this.category, item.id), { rentals: validRentals });
+        console.log(`期限切れ削除 -> ${item.id}`);
       }
       await this.fetchItems();
     },
